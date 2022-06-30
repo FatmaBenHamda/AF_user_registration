@@ -79,6 +79,7 @@ public class UserControllerTest {
     c.set(Calendar.YEAR, c.get(Calendar.YEAR) - 19);
     user.setBirthDate(c.getTime());
     user.setGender(Gender.F);
+    user.setResidenceCountry("FR");
     // case 1: InValid user name
 
     MvcResult mvcResult = mockMvc
@@ -110,6 +111,26 @@ public class UserControllerTest {
         .andReturn();
     status = mvcResult.getResponse().getStatus();
     assertEquals(400, status);
+  }
+
+  @Test
+  public void createUser_Exception() throws Exception {
+    Mockito.when(userService.createUser(any())).thenThrow(new Exception("new exception"));
+    UserDTO user = new UserDTO();
+    user.setUserName("USER");
+    Calendar c = Calendar.getInstance();
+    c.set(Calendar.YEAR, c.get(Calendar.YEAR) - 19);
+    user.setBirthDate(c.getTime());
+    user.setGender(Gender.F);
+    user.setResidenceCountry("FR");
+
+    MvcResult mvcResult = mockMvc
+        .perform(MockMvcRequestBuilders.post("/user")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(user)))
+        .andReturn();
+    int status = mvcResult.getResponse().getStatus();
+    assertEquals(500, status);
   }
 
   @Test

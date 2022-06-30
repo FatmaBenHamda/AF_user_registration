@@ -46,13 +46,25 @@ public class UserServiceTest {
   }
 
   @Test
-  public void createUser(){
+  public void createUser_OK(){
     Mockito.when(userRepository.save(Mockito.any())).thenReturn(user);
     try {
       User result = userService.createUser(user);
       assertEquals(user.getUserName(),result.getUserName());
     } catch (Exception e){
       assert false;
+    }
+  }
+
+
+  @Test(expected = Exception.class)
+  public void createUser_Exception(){
+    Mockito.when(userRepository.save(Mockito.any())).thenThrow(new Exception("new exception"));
+    try {
+      userService.createUser(user);
+      assert false;
+    } catch (Exception e){
+      assert true;
     }
   }
 
